@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lff.poison.mapper.SampleToxinMapper">
+  <resultMap id="BaseResultMap" type="com.lff.poison.domain.SampleToxin">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="toxin_id" jdbcType="INTEGER" property="toxinId" />
+    <result column="toxin_count" jdbcType="REAL" property="toxinCount" />
+    <result column="sample_info_id" jdbcType="INTEGER" property="sampleInfoId" />
+  </resultMap>
+
+  <insert id="inserinto">
+        insert into sample_toxin(toxin_id,toxin_count,sample_info_id) values(#{toxinId},#{toxinCount},#{sampleInfoId});
+  </insert>
+</mapper>

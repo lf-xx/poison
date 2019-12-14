@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lff.poison.mapper.AddressCityMapper">
+  <resultMap id="BaseResultMap" type="com.lff.poison.domain.AddressCity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="code" jdbcType="VARCHAR" property="code" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="provinceCode" jdbcType="VARCHAR" property="provincecode" />
+  </resultMap>
+  <!--根据编码查对象-->
+  <select id="SelectByAddressCityCode" resultMap="BaseResultMap">
+     select * from address_city where code = #{cityCode}
+  </select>
+  <select id="selecteAll" resultMap="BaseResultMap">
+    select * from address_city where provinceCode = #{shi}
+  </select>
+</mapper>

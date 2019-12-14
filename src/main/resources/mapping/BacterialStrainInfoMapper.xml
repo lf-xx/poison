@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iff.poison.domain.BacterialStrainInfoMapper">
+  <resultMap id="BaseResultMap" type="com.lff.poison.domain.BacterialStrainInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sample_info_id" jdbcType="INTEGER" property="sampleInfoId" />
+    <result column="sample_num" jdbcType="VARCHAR" property="sampleNum" />
+    <result column="original_num" jdbcType="VARCHAR" property="originalNum" />
+    <result column="word_addr" jdbcType="VARCHAR" property="wordAddr" />
+    <result column="txt_addr" jdbcType="VARCHAR" property="txtAddr" />
+    <result column="picture_addr" jdbcType="VARCHAR" property="pictureAddr" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="isdel" jdbcType="INTEGER" property="isdel" />
+  </resultMap>
+
+  <insert id="inserinto"  keyProperty="id" useGeneratedKeys="true">
+        insert into bacterial_strain_info(sample_info_id,sample_num,original_num,word_addr,txt_addr,picture_addr,create_time,isdel)
+        values(#{sampleInfoId},#{sampleNum},#{originalNum},#{wordAddr},#{txtAddr},#{pictureAddr},now(),0);
+  </insert>
+</mapper>

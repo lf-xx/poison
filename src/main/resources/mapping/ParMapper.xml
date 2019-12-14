@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lff.poison.mapper.ParMapper">
+  <resultMap id="BaseResultMap" type="com.lff.poison.domain.Par">
+    <result column="breed_id" jdbcType="INTEGER" property="breedId" />
+    <result column="breed_name" jdbcType="VARCHAR" property="breedName" />
+    <result column="toxin_id" jdbcType="INTEGER" property="toxinId" />
+    <result column="toxin_name" jdbcType="VARCHAR" property="toxinName" />
+    <result column="par" jdbcType="REAL" property="par" />
+  </resultMap>
+<!-- <select id="SelectByBreed" resultMap="BaseResultMap">
+ /*SELECT breed_name FROM sample_info si,par WHERE breed_id = breed GROUP BY si.`id`;*/
+ SELECT breed_name FROM sample_info si INNER JOIN par ON si.`breed` = par.`breed_id` WHERE si.`id`=#{si.id}
+ </select>-->
+</mapper>

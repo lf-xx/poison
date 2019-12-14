@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lff.poison.mapper.SampleInfoMapper">
+    <resultMap id="BaseResultMap" type="com.lff.poison.domain.SampleInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="sample_id" jdbcType="VARCHAR" property="sampleId"/>
+        <result column="crop_category_id" jdbcType="INTEGER" property="cropCategoryId"/>
+        <result column="breed" jdbcType="INTEGER" property="breed"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="county" jdbcType="VARCHAR" property="county"/>
+        <result column="township" jdbcType="VARCHAR" property="township"/>
+        <result column="village" jdbcType="VARCHAR" property="village"/>
+        <result column="household" jdbcType="VARCHAR" property="household"/>
+        <result column="harvest_time" jdbcType="TIMESTAMP" property="harvestTime"/>
+        <result column="sampling_time" jdbcType="TIMESTAMP" property="samplingTime"/>
+        <result column="sampling_people" jdbcType="VARCHAR" property="samplingPeople"/>
+        <result column="pollution_rate" jdbcType="REAL" property="pollutionRate"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="isdel" jdbcType="INTEGER" property="isdel"/>
+        <result column="input_time" jdbcType="TIMESTAMP" property="inputTime"/>
+        <result column="flag" jdbcType="INTEGER" property="flag"/>
+        <result column="enterpeople" jdbcType="INTEGER" property="enterpeople"/>
+        <result column="varieties" jdbcType="VARCHAR" property="varieties"/>
+        <result column="toxinsss" property="toxinsss"/>
+        <!--多对一的配置-->
+        <association property="cropSpecies" javaType="com.lff.poison.domain.CropSpecies">
+            <id column="id" property="id"></id>
+            <result column="crop_species" property="cropSpecies"></result>
+            <result column="state" property="state"></result>
+        </association>
+        <!--一对多-->
+        <collection property="sampleToxinlist" ofType="com.lff.poison.domain.SampleToxin">
+            <id column="id" property="id"></id>
+            <result column="toxin_id" property="toxinId"></result>
+            <result column="toxin_count" property="toxinCount"></result>
+            <result column="sample_info_id" property="sampleInfoId"></result>
+        </collection>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.lff.poison.domain.SampleInfoWithBLOBs">
+        <result column="seasonal" jdbcType="LONGVARCHAR" property="seasonal"/>
+        <result column="description" jdbcType="LONGVARCHAR" property="description"/>
+    </resultMap>
+
+    <!-- <select id="queryAll" resultMap="BaseResultMap">
+   /*    SELECT * FROM sample_info info,sample_toxin toxin,sample_toxin_info toxininfo
+   WHERE info.`id`= toxin.`sample_info_id` AND toxin.`toxin_id` = toxininfo.`i
+
+   SELECT cc.id as ccid,cc.crop_category,sti.id as stid ,GROUP_CONCAT(sti.toxin_type) as toxintype,s.*,a.`code`
+      as acode ,a.`name` as aname,p.`code` as pcode ,p.`name` as pname,t.`code`
+      as tcode ,t.`name` AS tname FROM sample_info s
+         LEFT JOIN address_city a ON  s.city = a.code
+         LEFT JOIN address_province p on s.province = p.code
+         LEFT JOIN address_town t on s.county = t.code
+         LEFT JOIN sample_toxin st on s.id = st.sample_info_id
+         LEFT JOIN crop_category cc ON s.crop_category_id= cc.id
+         LEFT JOIN sample_toxin_info sti ON st.toxin_id =  sti.id GROUP BY s.id
+     </select>-->
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
+        WHERE si.`breed` = cs.`id`
+        AND si.`id` = st.`sample_info_id`
+        AND sti.`id` = st.`toxin_id`
+        and si.isdel = 0
+        GROUP BY si.`id`
+    </select>
+
+<!--
+    <select id="SearchLike" resultMap="BaseResultMap">
+        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
+        WHERE si.`breed` = cs.`id`
+        AND si.`id` = st.`sample_info_id`
+        AND sti.`id` = st.`toxin_id`
+        GROUP BY si.`id`
+    </select>
+-->
+
+    <select id="selectBySearchBean" resultMap="BaseResultMap">
+        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species
+        cs,sample_toxin_info sti
+        WHERE si.`breed` = cs.id
+        AND si.`id` = st.`sample_info_id`
+        AND sti.`id` = st.`toxin_id`
+        and si.isdel =0
+        and 1=1
+        <if test="sampleId != null and sampleId !=''">
+            and si.sample_id like concat ('%',#{sampleId},'%')
+        </if>
+        <if test="breed != null and breed!=''">
+            and si.breed = #{breed}
+        </if>
+        <if test="leftNum!=null and rightNum!=null">
+            and si.pollution_rate between #{leftNum} and #{rightNum}
+        </if>
+
+        <if test="inputTime !=null and inputTime!=''">
+            and si.input_time like concat('%',#{inputTime},'%')
+        </if>
+        <if test="toxin_id != null and toxin_id!=''">
+            and st.toxin_id = {#toxin_type}
+        </if>
+        GROUP BY si.id
+    </select>
+
+    <update id="deleteOneBySampleId">
+        UPDATE sample_info SET isdel =1 WHERE sample_id=#{sampleId}
+    </update>
+    <update id="deleteManyById" parameterType="list">
+        UPDATE sample_info SET isdel =1 WHERE id
+        in
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <!--keyProperty="id" useGeneratedKeys="true" :"就是获取自增主键的id  -->
+    <insert id="insertinto" keyProperty="id" useGeneratedKeys="true">
+        insert into sample_info(sample_id,sampling_people,create_time,input_time,isdel,pollution_rate,seasonal,description,harvest_time,sampling_time,crop_category_id,breed,province,city,county)
+        values(#{sampleId},#{samplingPeople},now(),now(),0,#{pollutionRate},#{seasonal},#{description},#{harvestTime},#{samplingTime},#{cropCategoryId},#{breed},#{province},#{city},#{county});
+    </insert>
+</mapper>

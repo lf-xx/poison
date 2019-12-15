@@ -1,5 +1,7 @@
 package com.lff.poison.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.lff.poison.domain.*;
 import com.lff.poison.domain.dto.SelectDto;
@@ -13,13 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@RestController
+@Controller
 public class QueryController {
 
     @Autowired
@@ -45,11 +48,15 @@ public class QueryController {
             return "IM";
         }*/
     @RequestMapping("/selectAll")
-    public List<SampleInfo> queryAll(@RequestParam(value="page",required = false, defaultValue = "1")Integer page,
-                                     @RequestParam(value="pageSize",required = false,defaultValue="2")Integer pageSize) {
+    public ModelAndView queryAll(@RequestParam(value="pageNum",required = false, defaultValue = "1")Integer page,
+                           @RequestParam(value="pageSize",required = false,defaultValue="2")Integer pageSize,
+                           ModelAndView modelAndView) {
+        PageHelper.startPage(page,pageSize);
         PageInfo<SampleInfo> pageInfo=queryService.selectAll(page,pageSize);
-        List<SampleInfo> list = pageInfo.getList();
-        return list;
+        modelAndView.addObject("pageInfo", pageInfo);
+        modelAndView.setViewName("IM");
+
+        return modelAndView;
     }
 /*
     @RequestMapping("/searchLike")

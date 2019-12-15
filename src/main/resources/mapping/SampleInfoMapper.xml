@@ -2,9 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lff.poison.mapper.SampleInfoMapper">
     <resultMap id="BaseResultMap" type="com.lff.poison.domain.SampleInfo">
-        <id column="id" jdbcType="INTEGER" property="id"/>
+        <id column="si_id" jdbcType="INTEGER" property="id"/>
         <result column="sample_id" jdbcType="VARCHAR" property="sampleId"/>
-        <result column="crop_category_id" jdbcType="INTEGER" property="cropCategoryId"/>
+        <result column="si_crop_category_id" jdbcType="INTEGER" property="cropCategoryId"/>
         <result column="breed" jdbcType="INTEGER" property="breed"/>
         <result column="province" jdbcType="VARCHAR" property="province"/>
         <result column="city" jdbcType="VARCHAR" property="city"/>
@@ -56,9 +56,30 @@
          LEFT JOIN crop_category cc ON s.crop_category_id= cc.id
          LEFT JOIN sample_toxin_info sti ON st.toxin_id =  sti.id GROUP BY s.id
      </select>-->
-
+    <sql id="simpleInfoColumn">
+        si.id as si_id,
+        si.sample_id,
+        si.crop_category_id as si_crop_category_id,
+        si.breed,
+        si.province,
+        si.city,
+        si.county,
+        si.township,
+        si.village,
+        si.household,
+        si.harvest_time,
+        si.sampling_time,
+        si.sampling_people,
+        si.pollution_rate,
+        si.create_time,
+        si.isdel,
+        si.input_time,
+        si.flag,
+        si.enterpeople,
+        si.varieties
+    </sql>
     <select id="selectAll" resultMap="BaseResultMap">
-        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
+        SELECT <include refid="simpleInfoColumn"/>, GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
         WHERE si.`breed` = cs.`id`
         AND si.`id` = st.`sample_info_id`
         AND sti.`id` = st.`toxin_id`

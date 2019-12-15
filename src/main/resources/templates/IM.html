@@ -12,12 +12,19 @@
     <title>信息管理</title>
     <link rel="stylesheet" type="text/css" href="../static/css/reset.css"/>
     <script src="../static/js/jquery.js"></script>
-    <script src="../static/js/IM-index.js"></script>
+    <!--
+        <script src="../static/js/IM-index.js"></script>
+    -->
     <link rel="stylesheet" type="text/css" href="../static/css/IM-index.css"/>
     <script src="../static/js/super.js"></script>
     <style>
         html, body {
             height: 100%;
+        }
+
+        .fuck {
+            width: 100px;
+            padding-left: 20px;
         }
     </style>
 </head>
@@ -422,43 +429,40 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="sample : ${list}">
+                <tr th:each="sample : ${pageInfo.list}">
                     <td><input class="testyangpin" name="duoxuan" th:value="${sample.id}" type="checkbox"></td>
                     <td class="ybbh" th:text="${sample.sampleId}"></td>
                     <td class="" th:text="${sample.province+sample.city+sample.county}"></td>
                     <td class="cropSpecies" th:text="${sample.cropSpecies.cropSpecies}"></td>
                     <td th:text="${sample.samplingTimeStr}" *100+%></td>
-
                     <td th:text="${sample.inputTimeStr}"></td>
-
                     <!-- <td th:text="${#numbers.formatPercent(sample.pollutionRate)}"></td>-->
                     <td class="pollutionRateStr" th:text="${sample.pollutionRateStr}"></td>
                     <td th:text="${sample.toxinsss}"></td>
-                    <td><a href="editIM.html">编辑</a> | <a
-                            th:href="@{'deleteOneBySampleId?sampleId='+${sample.sampleId}}"
-                    >删除</a>
+                    <td><a href="editIM.html">编辑</a>
+                        | <a th:href="@{'deleteOneBySampleId?sampleId='+${sample.sampleId}}">删除</a>
                         <!--href="javascript:if(confirm('确实要删除吗?')) location='deleteOneBySampleId?sampleId='+${sample.sampleId}+''"-->
                     </td>
                 </tr>
-                <!--  <tr>
-                    <td><input class="testyangpin" value="748" type="checkbox"></td>
-                    <td class="ybbh">R-13-2322324</td>
-                    <td>安徽六安寿县</td>
-                    <td>水稻</td>
-                    <td>2013-09-29</td>
-                    <td>2018-03-12</td>
-                    <td>100.0%</td>
-                    <td>黄曲霉毒素B1</td>
-                    <td><a href="/glory/rest/toeditim?id=748">编辑</a> |<a href="javascript:if(confirm('确实要删除吗?'))location='/glory/rest/iddeleteyangpin?id=748'">删除</a></td>
-                  </tr>-->
                 </tbody>
             </table>
-            <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span th:text="${pageInfo.total}"></span> 条记录</p>
+          <!--  <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span
+                    th:text="${pageInfo.total}"></span> 条记录</p>
             <a th:href="@{/selectAll}">首页</a>
             <a th:href="@{/selectAll(pageNum=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
             <a th:href="@{/selectAll(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
-            <a th:href="@{/selectAll(pageNum=${pageInfo.pages})}">尾页</a>
+            <a th:href="@{/selectAll(pageNum=${pageInfo.pages})}">尾页</a>-->
             </table>
+        </div>
+        <div>
+            <a class="allpage"><b th:text="'共 '+ ${pageInfo.pages}+ ' 页'"></b></a>
+            <a th:if="${pageInfo.hasPreviousPage} == true"
+               th:href="@{'selectAll?pageNum=' + ${pageInfo.prePage}}">上一页</a>
+                <a th:href="@{'selectAll?pageNum=' + ${i}}" th:each="i :${#numbers.sequence(1, pageInfo.pages)} "
+                   th:class="'fuck'" th:text="${i}"></a>
+            &nbsp;&nbsp;<a th:href="@{'selectAll?pageNum=' + ${pageInfo.nextPage}}"
+                           th:if="${pageInfo.hasNextPage} == true">下一页</a>
+            &nbsp;&nbsp;<a th:href="@{'selectAll?pageNum='+ ${pageInfo.pages}}">尾页</a>
         </div>
         <div class="page"></div>
     </div>
@@ -504,7 +508,7 @@
         color: #4c4743;
     } */
 </style>
-<div class="im-page">
+<!--<div class="im-page">
     <ul>
         <li class="im-indexpage"><a href="">首页</a></li>
         <li class="im-nextpage"><a href="">上一页</a></li>
@@ -516,10 +520,12 @@
         <li class="im-nextpage"><a href="">下一页</a></li>
         <li class="im-indexpage"><a href="">尾页</a></li>
     </ul>
-</div>
+</div>-->
 <script type="text/javascript" src="../static/js/jquery-2.1.0.js"></script>
 <script type="text/javascript" src="../static/js/browsing.js"></script>
+<!--
 <script type="text/javascript" src="../static/js/linkage4.js"></script>
+-->
 <script type="text/javascript">
 
     function manydelete() {
@@ -720,8 +726,8 @@
         var day = $("#day").val();
         var province1 = $("#shen").val()
         var city1 = $("#shi").val()
-        var county1= $("#xian").val()
-        window.location.href = "findBySearchBean?pollutionRate=" + pollutionRateStr + "&sampleId=" + sampleId + "&breed=" + breed + "&year=" + year + "&month=" + month + "&day=" + day + "&toxinId=" + toxinId+"&province1="+province1+"&city1="+city1+"&county1="+county1;
+        var county1 = $("#xian").val()
+        window.location.href = "findBySearchBean?pollutionRate=" + pollutionRateStr + "&sampleId=" + sampleId + "&breed=" + breed + "&year=" + year + "&month=" + month + "&day=" + day + "&toxinId=" + toxinId + "&province1=" + province1 + "&city1=" + city1 + "&county1=" + county1;
     }
 </script>
 </body>

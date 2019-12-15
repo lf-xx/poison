@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class QueryServiceImpl implements QueryService {
@@ -64,7 +66,7 @@ public class QueryServiceImpl implements QueryService {
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public PageInfo<SampleInfo> selectAll(Integer page, Integer pageSize) {
-        List<SampleInfo> sampleInfos = InfoMapper.selectAll();
+            List<SampleInfo> sampleInfos = InfoMapper.selectAll();
 
         // System.err.println(sampleInfos);
         for (int i = 0; i < sampleInfos.size(); i++) {
@@ -169,6 +171,9 @@ public class QueryServiceImpl implements QueryService {
         selectDto.setAddressStr(addressStr);
         //调用方法
         List<SampleInfo> sampleInfos = InfoMapper.selectBySearchBean(selectDto);
+        if (Objects.isNull(sampleInfos)) {
+            sampleInfos = Collections.emptyList();
+        }
         //对集合进行处理
         for (int i = 0; i < sampleInfos.size(); i++) {
             sampleInfos.get(i).setSamplingTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getSamplingTime(), "yyyy-MM-dd"));

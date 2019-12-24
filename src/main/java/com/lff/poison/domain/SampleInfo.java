@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class SampleInfo {
+
     private Integer id;
     private String sampleId;
     private Integer cropCategoryId;
@@ -27,16 +28,108 @@ public class SampleInfo {
     private String varieties;
     private String seasonal;
     private String description;
+    private String toxinCountStr;//毒素含量字符串
     //专门用于展示的时间字符串
     private String samplingTimeStr;//取样时间字符串
     private String inputTimeStr;//录入时间字符串
+    private String harvestTimeStr;//收获时间字符串
+    private String createTimeStr;//创建时间字符串
+
     private String toxinsss;//拼接完成的毒素
     //多对一 多个样品对应一个种类
     private  CropSpecies cropSpecies;//使用实体类类型的变量
+    private  CropCategory cropCategory;//使用实体类类型的变量
+
+
+    private String cropSpeciesStr;//类型的变量名称
+    private String cropCategoryStr;//类型的变量名称
+
+    private String toxinType;//毒素类型
+    private String toxinCount;//毒素含量
+    private String originalNum;//原始菌株编号
+    private String pname;//省名称
+    private String cname;//市名
+    private String tname;//县区名
+
+
     //一对多
     private List<SampleToxin> sampleToxinlist;//一个实体类当中有多个毒素（毒素的id）
     private List<SampleToxinInfo> sampleToxinInfolist;//毒素详细信息表也关联
     private List<BacterialStrainInfo> bacterialStrainInfoList;//菌株集合
+
+    public String getPname() {
+        return pname;
+    }
+
+    public void setPname(String pname) {
+        this.pname = pname;
+    }
+
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname;
+    }
+
+    public String getTname() {
+        return tname;
+    }
+
+    public void setTname(String tname) {
+        this.tname = tname;
+    }
+
+    public String getOriginalNum() {
+        return originalNum;
+    }
+
+    public void setOriginalNum(String originalNum) {
+        this.originalNum = originalNum;
+    }
+
+    public String getToxinCount() {
+        return toxinCount;
+    }
+
+    public void setToxinCount(String toxinCount) {
+        this.toxinCount = toxinCount;
+    }
+
+    public String getToxinType() {
+        return toxinType;
+    }
+
+    public void setToxinType(String toxinType) {
+        this.toxinType = toxinType;
+    }
+
+    public String getToxinCountStr() {
+        return toxinCountStr;
+    }
+
+    public void setToxinCountStr(String toxinCountStr) {
+        this.toxinCountStr = toxinCountStr;
+    }
+
+    public String getCropSpeciesStr() {
+        return cropSpeciesStr;
+    }
+
+    public void setCropSpeciesStr(String cropSpeciesStr) {
+        this.cropSpeciesStr = cropSpeciesStr;
+    }
+
+    public String getCropCategoryStr() {
+        return cropCategoryStr;
+    }
+
+    public void setCropCategoryStr(String cropCategoryStr) {
+        this.cropCategoryStr = cropCategoryStr;
+    }
+
+
 
     @Override
     public String toString() {
@@ -72,6 +165,30 @@ public class SampleInfo {
         sb.append(", bacterialStrainInfoList=").append(bacterialStrainInfoList);
         sb.append('}');
         return sb.toString();
+    }
+
+    public CropCategory getCropCategory() {
+        return cropCategory;
+    }
+
+    public void setCropCategory(CropCategory cropCategory) {
+        this.cropCategory = cropCategory;
+    }
+
+    public String getHarvestTimeStr() {
+        return harvestTimeStr;
+    }
+
+    public void setHarvestTimeStr(String harvestTimeStr) {
+        this.harvestTimeStr = harvestTimeStr;
+    }
+
+    public String getCreateTimeStr() {
+        return createTimeStr;
+    }
+
+    public void setCreateTimeStr(String createTimeStr) {
+        this.createTimeStr = createTimeStr;
     }
 
     public String getPollutionRateStr() {

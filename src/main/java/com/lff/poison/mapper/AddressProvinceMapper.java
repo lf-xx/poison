@@ -25,4 +25,7 @@ public interface AddressProvinceMapper {
 
     List<AddressProvince> selecteAll();
 
+    //根据名称查询省
+    List<AddressProvince> queryPByName();
+
 }

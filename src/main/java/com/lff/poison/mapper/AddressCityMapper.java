@@ -26,4 +26,6 @@ public interface AddressCityMapper {
     public AddressCity SelectByAddressCityCode(String cityCode);
 
     List<AddressCity> selecteAll(String shi);
+    //根据省的名称和市的code查询
+    List<AddressCity> queryByNameAndCode();
 }

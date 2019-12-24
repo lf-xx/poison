@@ -1,11 +1,13 @@
 package com.lff.poison.service.impl;
 
 import com.github.pagehelper.PageInfo;
+import com.github.pagehelper.util.StringUtil;
 import com.lff.poison.domain.*;
 import com.lff.poison.domain.dto.SelectDto;
 import com.lff.poison.mapper.*;
 import com.lff.poison.service.QueryService;
 import com.lff.poison.util.DateUtils;
+import com.mysql.cj.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,38 +37,69 @@ public class QueryServiceImpl implements QueryService {
     @Autowired
     private BacterialStrainInfoMapper strainInfoMapper;
 
-/*    @Override
+
+
+    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public List<SampleInfo> queryAll() {
         List<SampleInfo> sampleInfos = InfoMapper.queryAll();
+        // System.err.println(sampleInfos);
         for (int i = 0; i < sampleInfos.size(); i++) {
             sampleInfos.get(i).setSamplingTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getSamplingTime(), "yyyy-MM-dd"));
-            sampleInfos.get(i).setInputTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getInputTime(), "yyyy-MM-dd"));
+          sampleInfos.get(i).setCreateTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getCreateTime(),"yyyy-MM-dd"));
+          if (sampleInfos.get(i).getHarvestTime()!=null&&!"".equals(sampleInfos.get(i).getHarvestTime())) {
+              sampleInfos.get(i).setHarvestTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getHarvestTime(), "yyyy-MM-dd"));
+          }
+            if (sampleInfos.get(i).getInputTime() != null && !"".equals(sampleInfos.get(i).getInputTime())) {
+                sampleInfos.get(i).setInputTimeStr(DateUtils.dateFormat(sampleInfos.get(i).getInputTime(), "yyyy-MM-dd"));
+            }
             //获取省的编码
             String province = sampleInfos.get(i).getProvince();
             //根据编码查询对象
             AddressProvince addressProvince = addressProvinceMapper.SelectByProvinceCode(province);
             //重新赋值
-            sampleInfos.get(i).setProvince(addressProvince.getName());
+            if (StringUtil.isNotEmpty(addressProvince.getName())) {
+
+                sampleInfos.get(i).setProvince(addressProvince.getName());
+            }
             //获取市区的编码
             String city = sampleInfos.get(i).getCity();
             //根据城市编码查询对象
             AddressCity addressCity = cityMapper.SelectByAddressCityCode(city);
             //重新赋值
-            sampleInfos.get(i).setCity(addressCity.getName());
+            if (addressCity.getName() != null && !"".equals(addressCity.getName())) {
+                sampleInfos.get(i).setCity(addressCity.getName());
+            }
             String county = sampleInfos.get(i).getCounty();
             AddressTown addressTown = townMapper.SelectByTownCode(county);
-            sampleInfos.get(i).setCounty(addressTown.getName());
-            Integer cropCategoryId = sampleInfos.get(i).getCropCategoryId();
-            // CropSpecies cropSpecies = speciesMapper.SelectByCropId(cropCategoryId);
+            if (addressTown.getName() != null && !"".equals(addressTown.getName())) {
+                sampleInfos.get(i).setCounty(addressTown.getName());
+            }
+
+            //
+            Float pollutionRate = sampleInfos.get(i).getPollutionRate();
+
+            Float a = pollutionRate;
+            //将float转为String
+            String b = String.format("%1.1f", a);
+            b = b + "%";
+            sampleInfos.get(i).setPollutionRateStr(b);
+            //System.out.println(sampleInfos);
+
+       /*     List<BacterialStrainInfo> bacterialStrainInfoList = sampleInfos.get(i).getBacterialStrainInfoList();
+            for (int j = 0; j <bacterialStrainInfoList.size() ; j++) {
+                System.out.println(j);;
+            }*/
+
         }
+
         return sampleInfos;
-    }*/
+    }
 
     @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public PageInfo<SampleInfo> selectAll(Integer page, Integer pageSize) {
-            List<SampleInfo> sampleInfos = InfoMapper.selectAll();
+        List<SampleInfo> sampleInfos = InfoMapper.selectAll();
 
         // System.err.println(sampleInfos);
         for (int i = 0; i < sampleInfos.size(); i++) {
@@ -79,8 +112,7 @@ public class QueryServiceImpl implements QueryService {
             //根据编码查询对象
             AddressProvince addressProvince = addressProvinceMapper.SelectByProvinceCode(province);
             //重新赋值
-
-            if (addressProvince.getName() != null && !"".equals(addressProvince.getName())) {
+            if (StringUtil.isNotEmpty(addressProvince.getName())) {
 
                 sampleInfos.get(i).setProvince(addressProvince.getName());
             }
@@ -106,16 +138,12 @@ public class QueryServiceImpl implements QueryService {
             b = b + "%";
             sampleInfos.get(i).setPollutionRateStr(b);
             //System.out.println(sampleInfos);
-
-       /*     List<BacterialStrainInfo> bacterialStrainInfoList = sampleInfos.get(i).getBacterialStrainInfoList();
-            for (int j = 0; j <bacterialStrainInfoList.size() ; j++) {
-                System.out.println(j);;
-            }*/
-
         }
         PageInfo<SampleInfo> sampleInfoPageInfo = new PageInfo<>(sampleInfos);
         return sampleInfoPageInfo;
     }
+
+
 /*
     @Override
     public List<SampleInfo> SearchLike(String sampleId, String pollutionRateStr, String samplingTimeStr, String toxinsss, String cropSpecies, String province, String city, String county) {
@@ -124,7 +152,7 @@ public class QueryServiceImpl implements QueryService {
 
 
     @Override
-    public List<SampleInfo> selectBySearchBean(SelectDto selectDto) {
+    public List<SampleInfo> selectBySearchBean(Integer page, Integer pageSize,SelectDto selectDto) {
         //第一部分 对参数 进行处理
         Integer breed = selectDto.getBreed();
         String sampleId = selectDto.getSampleId();
@@ -193,6 +221,7 @@ public class QueryServiceImpl implements QueryService {
             String county = sampleInfos.get(i).getCounty();
             AddressTown addressTown = townMapper.SelectByTownCode(county);
             sampleInfos.get(i).setCounty(addressTown.getName());
+
             //
             Float pollutionRate = sampleInfos.get(i).getPollutionRate();
             Float a = pollutionRate;
@@ -204,6 +233,50 @@ public class QueryServiceImpl implements QueryService {
 
         }
         return sampleInfos;
+    }
+    //根据名称查询省
+    @Override
+    public List<AddressProvince> queryPByName() {
+        List<AddressProvince> provinces = addressProvinceMapper.queryPByName();
+        return provinces;
+    }
+
+    //根据省的名称和市的code查询
+    @Override
+    public List<AddressCity> queryByNameAndCode() {
+        List<AddressCity> addressCities = cityMapper.queryByNameAndCode();
+        return addressCities;
+    }
+    @Override
+    public List<AddressTown> queryByNameAndPCCode() {
+        List<AddressTown> towns = townMapper.queryByNameAndPCCode();
+        return towns;
+    }
+
+    //  //修改查询
+    @Override
+    public SampleInfo editQuery(String id) {
+        SampleInfo sampleInfo = InfoMapper.editQuery(id);
+        sampleInfo.setSamplingTimeStr(DateUtils.dateFormat(sampleInfo.getSamplingTime(), "yyyy-MM-dd"));
+        sampleInfo.setHarvestTimeStr(DateUtils.dateFormat(sampleInfo.getHarvestTime(), "yyyy-MM-dd"));
+        return sampleInfo;
+    }
+    //修改
+    @Override
+    public void updateSample(SampleInfo sampleInfo,String id) {
+        InfoMapper.updateSample(sampleInfo,id);
+    }
+
+    @Override
+    public void addSampleInfo(SampleInfo sampleInfo) {
+        InfoMapper.addSampleInfo(sampleInfo);
+    }
+
+    //查询当前编号下的所有菌株
+    @Override
+    public List<BacterialStrainInfo> selectBySampleId(String sampleNum) {
+        List<BacterialStrainInfo> bacterialStrainInfos = strainInfoMapper.selectBySampleId(sampleNum);
+        return bacterialStrainInfos;
     }
 
     @Override
@@ -219,7 +292,7 @@ public class QueryServiceImpl implements QueryService {
     //添加方法
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void insertinto(String sampleId, String samplingPeople, String[] toxins, String[] toxinCount, Float pollutionRate, String seasonal, String description, String harvestTime, String samplingTime, Integer cropCategoryId, Integer breed, String province, String city, String county, String originalNum, String[] wordAddr, String[] txtAddr, String[] pictureAddr) {
+    public void insertinto(String sampleId, String samplingPeople, String[] toxins, String[] toxinCount, Float pollutionRate, String seasonal, String description, String harvestTime, String samplingTime, Integer cropCategoryId, Integer breed, String province, String city, String county, String[] originalNum, String[] wordAddr, String[] txtAddr, String[] pictureAddr) {
         SampleInfo sampleInfo = new SampleInfo();
         if (sampleId != null && !sampleId.equals("")) {
             sampleInfo.setSampleId(sampleId);//把接收到的参数付给对象
@@ -256,18 +329,22 @@ public class QueryServiceImpl implements QueryService {
             //调用添加毒素的方法
             sampleToxinMapper.inserinto(sampleToxin);
         }
-        BacterialStrainInfo strainInfo = new BacterialStrainInfo();
-        strainInfo.setOriginalNum(originalNum);
-        strainInfo.setSampleNum(strainInfo.getSampleNum());
-        for (int i = 0; i < wordAddr.length; i++) {
-            strainInfo.setId(strainInfo.getId());
-            strainInfo.setOriginalNum(wordAddr[i]);
+
+       // strainInfo.setOriginalNum(originalNum);
+
+        for (int i = 0; i < originalNum.length; i++) {
+            BacterialStrainInfo strainInfo = new BacterialStrainInfo();
+            strainInfo.setSampleNum(sampleInfo.getSampleId());
+            strainInfo.setSampleInfoId(sampleInfo.getId());
+            strainInfo.setOriginalNum(originalNum[i]);
+            strainInfo.setWordAddr(wordAddr[i]);
             strainInfo.setTxtAddr(txtAddr[i]);
             strainInfo.setPictureAddr(pictureAddr[i]);
             strainInfoMapper.inserinto(strainInfo);
         }
-
     }
+
+
 
 }
 

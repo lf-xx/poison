@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.lff.poison.mapper.SampleInfoMapper">
     <resultMap id="BaseResultMap" type="com.lff.poison.domain.SampleInfo">
-        <id column="si_id" jdbcType="INTEGER" property="id"/>
+        <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="sample_id" jdbcType="VARCHAR" property="sampleId"/>
         <result column="si_crop_category_id" jdbcType="INTEGER" property="cropCategoryId"/>
         <result column="breed" jdbcType="INTEGER" property="breed"/>
@@ -41,70 +41,94 @@
         <result column="seasonal" jdbcType="LONGVARCHAR" property="seasonal"/>
         <result column="description" jdbcType="LONGVARCHAR" property="description"/>
     </resultMap>
+    <resultMap id="BaseResultMap111" type="com.lff.poison.domain.SampleInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="sample_id" jdbcType="VARCHAR" property="sampleId"/>
+        <result column="crop_category_id" jdbcType="INTEGER" property="cropCategoryId"/>
+        <result column="breed" jdbcType="INTEGER" property="breed"/>
+        <result column="province" jdbcType="VARCHAR" property="province"/>
+        <result column="city" jdbcType="VARCHAR" property="city"/>
+        <result column="county" jdbcType="VARCHAR" property="county"/>
+        <result column="township" jdbcType="VARCHAR" property="township"/>
+        <result column="village" jdbcType="VARCHAR" property="village"/>
+        <result column="household" jdbcType="VARCHAR" property="household"/>
+        <result column="harvest_time" jdbcType="TIMESTAMP" property="harvestTime"/>
+        <result column="sampling_time" jdbcType="TIMESTAMP" property="samplingTime"/>
+        <result column="sampling_people" jdbcType="VARCHAR" property="samplingPeople"/>
+        <result column="pollution_rate" jdbcType="REAL" property="pollutionRate"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="isdel" jdbcType="INTEGER" property="isdel"/>
+        <result column="input_time" jdbcType="TIMESTAMP" property="inputTime"/>
+        <result column="flag" jdbcType="INTEGER" property="flag"/>
+        <result column="enterpeople" jdbcType="INTEGER" property="enterpeople"/>
+        <result column="varieties" jdbcType="VARCHAR" property="varieties"/>
+        <result column="toxinsss"  property="toxinsss"/>
+       <result column="crop_species" property="cropSpeciesStr"/>
+        <result column="crop_category" property="cropCategoryStr"/>
+        <!--
+        <result column="toxin_type" property="toxinType"/>
+            <result column="toxin_count" property="toxinCount"/>-->
+        <!--<result column="original_num" property="originalNum"/>-->
+        <result column="name" property="pname"/>
+        <result column="name" property="cname"/>
+        <result column="name" property="tname"/>
+        <result column="seasonal" property="seasonal"/>
+        <result column="description" property="description"/>
 
-    <!-- <select id="queryAll" resultMap="BaseResultMap">
-   /*    SELECT * FROM sample_info info,sample_toxin toxin,sample_toxin_info toxininfo
-   WHERE info.`id`= toxin.`sample_info_id` AND toxin.`toxin_id` = toxininfo.`i
 
-   SELECT cc.id as ccid,cc.crop_category,sti.id as stid ,GROUP_CONCAT(sti.toxin_type) as toxintype,s.*,a.`code`
-      as acode ,a.`name` as aname,p.`code` as pcode ,p.`name` as pname,t.`code`
-      as tcode ,t.`name` AS tname FROM sample_info s
-         LEFT JOIN address_city a ON  s.city = a.code
-         LEFT JOIN address_province p on s.province = p.code
-         LEFT JOIN address_town t on s.county = t.code
-         LEFT JOIN sample_toxin st on s.id = st.sample_info_id
-         LEFT JOIN crop_category cc ON s.crop_category_id= cc.id
-         LEFT JOIN sample_toxin_info sti ON st.toxin_id =  sti.id GROUP BY s.id
-     </select>-->
-    <sql id="simpleInfoColumn">
-        si.id as si_id,
-        si.sample_id,
-        si.crop_category_id as si_crop_category_id,
-        si.breed,
-        si.province,
-        si.city,
-        si.county,
-        si.township,
-        si.village,
-        si.household,
-        si.harvest_time,
-        si.sampling_time,
-        si.sampling_people,
-        si.pollution_rate,
-        si.create_time,
-        si.isdel,
-        si.input_time,
-        si.flag,
-        si.enterpeople,
-        si.varieties
-    </sql>
+        <!--多对一的配置-->
+        <association property="cropSpecies" javaType="com.lff.poison.domain.CropSpecies">
+            <id column="id" property="id"></id>
+            <result column="crop_species" property="cropSpecies"></result>
+            <result column="state" property="state"></result>
+        </association>
+
+        <!--一对多-->
+        <collection property="sampleToxinlist" ofType="com.lff.poison.domain.SampleToxin">
+            <id column="id" property="id"></id>
+            <result column="toxin_id" property="toxinId"></result>
+            <result column="toxin_count" property="toxinCount"></result>
+            <result column="sample_info_id" property="sampleInfoId"></result>
+        </collection>
+
+    </resultMap>
+
+    <!--编辑查询1-->
+    <select id="editQuery" resultMap="BaseResultMap111" parameterType="java.lang.String">
+	    SELECT s.*,c.crop_species crop_species ,cc.crop_category crop_category ,ap.name pname,ac.name cname,aot.name tname
+	    FROM sample_info s,crop_species c,crop_category cc,address_province ap,address_city ac,address_town aot
+	    WHERE s.breed = c.id AND s.crop_category_id = cc.id AND s.province=ap.code AND s.city=ac.code AND s.county = aot.code AND s.id =#{id}
+    </select>
+
     <select id="selectAll" resultMap="BaseResultMap">
-        SELECT <include refid="simpleInfoColumn"/>, GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
+         /*#样品编号 地点 小的种类 取样时间 真菌污染率 主要毒素*/
+        SELECT si.id, si.`sample_id`, si.`province`,si.`city`,si.`county`,
+        cs.`crop_species`,si.`sampling_time`,si.input_time,si.`pollution_rate`,
+         GROUP_CONCAT(sti.`toxin_type`) toxinsss
+        FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
         WHERE si.`breed` = cs.`id`
         AND si.`id` = st.`sample_info_id`
         AND sti.`id` = st.`toxin_id`
-        and si.isdel = 0
+        AND si.isdel = 0
         GROUP BY si.`id`
+    </select>
+    <select id="queryAll" resultMap="BaseResultMap111">
+    /* select * from sample_info*/
+    select s.*,c.crop_species crop_species ,cc.crop_category crop_category from sample_info s,crop_species c,crop_category cc WHERE s.breed = c.id and s.crop_category_id=cc.id
     </select>
 
-<!--
-    <select id="SearchLike" resultMap="BaseResultMap">
-        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
-        WHERE si.`breed` = cs.`id`
-        AND si.`id` = st.`sample_info_id`
-        AND sti.`id` = st.`toxin_id`
-        GROUP BY si.`id`
-    </select>
--->
+
 
     <select id="selectBySearchBean" resultMap="BaseResultMap">
-        SELECT si.*,GROUP_CONCAT(sti.`toxin_type`) toxinsss,cs.* FROM sample_info si,sample_toxin st,crop_species
-        cs,sample_toxin_info sti
-        WHERE si.`breed` = cs.id
+        SELECT si.id si_id,si.`sample_id`, si.`province`,si.`city`,si.`county`,
+        cs.`crop_species`,si.`sampling_time`,si.`pollution_rate`,si.input_time,
+        GROUP_CONCAT(sti.`toxin_type`) toxinsss
+        FROM sample_info si,sample_toxin st,crop_species cs,sample_toxin_info sti
+        WHERE si.`breed` = cs.`id`
         AND si.`id` = st.`sample_info_id`
         AND sti.`id` = st.`toxin_id`
-        and si.isdel =0
-        and 1=1
+        AND si.isdel = 0
+
         <if test="sampleId != null and sampleId !=''">
             and si.sample_id like concat ('%',#{sampleId},'%')
         </if>
@@ -121,7 +145,7 @@
         <if test="toxin_id != null and toxin_id!=''">
             and st.toxin_id = {#toxin_type}
         </if>
-        GROUP BY si.id
+        GROUP BY si_id
     </select>
 
     <update id="deleteOneBySampleId">
@@ -140,4 +164,56 @@
         insert into sample_info(sample_id,sampling_people,create_time,input_time,isdel,pollution_rate,seasonal,description,harvest_time,sampling_time,crop_category_id,breed,province,city,county)
         values(#{sampleId},#{samplingPeople},now(),now(),0,#{pollutionRate},#{seasonal},#{description},#{harvestTime},#{samplingTime},#{cropCategoryId},#{breed},#{province},#{city},#{county});
     </insert>
+
+    <insert id="addSampleInfo" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO `sample_info`(`sample_id`, `crop_category_id`, `breed`, `province`, `city`, `county`, `township`, `village`, `household`, `harvest_time`, `sampling_time`, `sampling_people`, `seasonal`, `description`, `pollution_rate`, `create_time`, `isdel`, `input_time`, `flag`, `enterpeople`, `varieties`)
+        VALUES (#{sampleId}, #{cropCategoryId}, #{breed}, #{province}, #{city}, #{county}, NULL, NULL, NULL,#{harvestTime}, #{samplingTime}, #{samplingPeople},#{seasonal},#{description}, #{pollutionRate},#{createTime},#{isdel},#{inputTime}, NULL, NULL, NULL);
+    </insert>
+    <!--修改-->
+    <update id="updateSample" >
+        UPDATE sample_info
+        SET
+        <if test="sampleInfo.sampleId != null and sampleInfo.sampleId !=''">
+            sample_id = #{sampleInfo.sampleId},
+        </if>
+        <if test="sampleInfo.cropCategoryId != null and sampleInfo.cropCategoryId != 0">
+            crop_category_id = #{sampleInfo.cropCategoryId},
+        </if>
+        <if test="sampleInfo.breed != null and sampleInfo.breed != 0">
+            breed = #{sampleInfo.breed},
+        </if>
+        <if test="sampleInfo.province != null and sampleInfo.province !=''">
+            province = #{sampleInfo.province},
+        </if>
+        <if test="sampleInfo.city != null and sampleInfo.city !=''">
+            city = #{sampleInfo.city},
+        </if>
+        <if test="sampleInfo.county != null and sampleInfo.county !=''">
+            county = #{sampleInfo.county},
+        </if>
+        <if test="sampleInfo.harvestTime != null and sampleInfo.harvestTime != ''">
+            harvest_time = #{sampleInfo.harvestTime},
+        </if>
+        <if test="sampleInfo.samplingTime != null and sampleInfo.samplingTime != ''">
+            sampling_time = #{sampleInfo.samplingTime},
+        </if>
+        <if test="sampleInfo.samplingPeople != null and sampleInfo.samplingPeople != ''">
+            sampling_people = #{sampleInfo.samplingPeople},
+        </if>
+        <if test="sampleInfo.seasonal != null and sampleInfo.seasonal != ''">
+            seasonal = #{sampleInfo.seasonal},
+        </if>
+        <if test="sampleInfo.description != null and sampleInfo.description != ''">
+            description = #{sampleInfo.description},
+        </if>
+        <if test="sampleInfo.pollutionRate != null and sampleInfo.pollutionRate != 0">
+            pollution_rate = #{sampleInfo.pollutionRate}
+        </if>
+        WHERE
+        id = #{id}
+    </update>
+
+
+
+
 </mapper>

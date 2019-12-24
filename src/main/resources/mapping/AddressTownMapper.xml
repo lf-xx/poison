@@ -13,4 +13,7 @@
     <select id="selecteAll" resultMap="BaseResultMap">
         select * from address_town where cityCode =#{xian}
     </select>
+    <select id="queryByNameAndPCCode" resultMap="BaseResultMap">
+        select * from address_town
+    </select>
 </mapper>

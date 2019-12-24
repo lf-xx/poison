@@ -1,60 +1,49 @@
 $(function(){
-/*	var character = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+	var character = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
 	var x = $(".edittable-bottom").length;
 	var i = x;
 	$("body").on("click",".add-ds",function(){
 		if(i<26){
-			$(".add-con").append("<li class='edittable-bottom'><div class='editbottom-left'>产毒菌株信息"+character[i]+"</div><div class='editbottom-right'><ul><li><lable>样品编号</lable><input id='sampleNum' name='sampleNum' type='text' class='sample' value='"+$('.ypbh').val()+"'/></li><li><lable>菌株原始编号</lable><input name='original_num' type='text'  class='originalNum'/><span class='err'></span></li><li class='form-a'><lable>文献信息</lable><a class='xz-btn-a'>选择文件</a> <input type='text'  class='wordAddr'   placeholder='仅支持doc/docx格式文档'/><input onchange='getPhotoSizes(this)' name='word_addr' type='file' class='wordAddr' accept='.doc,.docx'/></li><li class='form-c'><lable>文本信息</lable><a class='xz-btn-c'>选择文件</a> <input   type='text'  value='' class='txtAddr'  placeholder='仅支持txt格式'/><input onchange='getTextSize(this)' name='txt_addr' type='file' class='txtAddr' accept='.txt'/></li><li class='form-b'><lable>图片信息</lable><a class='xz-btn-b'>选择文件</a> <input type='text'  value='' class='pictureAddr'  placeholder='仅支持jpg/png格式'/><input onchange='getPhotoSize(this)' name='picture_addr' type='file' class='pictureAddr' accept='.png,.jpg,.jpeg'/></li><li><a class='del'>删除</a></li></ul></div></li>");
+			$(".add-con").append("<li class='edittable-bottom'><div class='editbottom-left'>产毒菌株信息"+character[i]+"</div><div class='editbottom-right'><ul><li><lable>样品编号</lable><input id='sample_num' name='sample_num' type='text' class='sample' readonly='readonly' value='"+$('.ypbh').val()+"'/></li><li><lable>菌株原始编号</lable><input name='original_num' type='text'  class='num'/><span class='err'></span></li><li class='form-a'><lable>文献信息</lable><a class='xz-btn-a'>选择文件</a> <input type='text' name='' id='' value='' class='file-name-a'  readonly='readonly' placeholder='仅支持doc/docx格式文档'/><input onchange='getPhotoSizes(this)' name='word_addr' type='file' class='file-info-a' accept='.doc,.docx'/></li><li class='form-c'><lable>文本信息</lable><a class='xz-btn-c'>选择文件</a> <input   type='text' name='' id='' value='' class='file-name-c'  readonly='readonly' placeholder='仅支持txt格式'/><input onchange='getTextSize(this)' name='txt_addr' type='file' class='file-info-c' accept='.txt'/></li><li class='form-b'><lable>图片信息</lable><a class='xz-btn-b'>选择文件</a> <input type='text' name='' id='' value='' class='file-name-b'  readonly='readonly' placeholder='仅支持jpg/png格式'/><input onchange='getPhotoSize(this)' name='picture_addr' type='file' class='file-info-b' accept='.png,.jpg,.jpeg'/></li><li><a class='del'>删除</a></li></ul></div></li>");
 			i++;
 		}else{
 			if($(".edittable-bottom").length<26){
-			$(".add-con").append("<li class='edittable-bottom'><div class='editbottom-left'>产毒菌株信息"+delcharacter[0]+"</div><div class='editbottom-right'><ul><li><lable>样品编号</lable><input id='sampleNum' name='sampleNum' type='text' class='sample'  value='"+$('.ypbh').val()+"' /></li><li><lable>菌株原始编号</lable><input name='original_num' type='text'  class='originalNum'/><span class='err'></span></li><li class='form-a'><lable>文献信息</lable><a class='xz-btn-a'>选择文件</a> <input type='text'  value='' class='wordAddr'   placeholder='仅支持doc/docx格式文档'/><input onchange='getPhotoSizes(this)' name='word_addr' type='file' class='wordAddr' accept='.doc,.docx'/></li><li class='form-c'><lable>文本信息</lable><a class='xz-btn-c'>选择文件</a> <input  type='text' value='' class='txtAddr'   placeholder='仅支持txt格式'/><input onchange='getTextSize(this)' name='txt_addr' type='file' class='txtAddr' accept='.txt'/></li><li class='form-b'><lable>图片信息</lable><a class='xz-btn-b'>选择文件</a> <input type='text'  value='' class='pictureAddr'  placeholder='仅支持jpg/png格式图片'/><input onchange='getPhotoSize(this)' name='picture_addr' type='file' class='pictureAddr' accept='.png,.jpg,.jpeg'/></li><li><a class='del'>删除</a></li></ul></div></li>");
+			$(".add-con").append("<li class='edittable-bottom'><div class='editbottom-left'>产毒菌株信息"+delcharacter[0]+"</div><div class='editbottom-right'><ul><li><lable>样品编号</lable><input id='sample_num' name='sample_num' type='text' class='sample' readonly='readonly' value='"+$('.ypbh').val()+"' /></li><li><lable>菌株原始编号</lable><input name='original_num' type='text'  class='num'/><span class='err'></span></li><li class='form-a'><lable>文献信息</lable><a class='xz-btn-a'>选择文件</a> <input type='text' name='' id='' value='' class='file-name-a'  readonly='readonly' placeholder='仅支持doc/docx格式文档'/><input onchange='getPhotoSizes(this)' name='word_addr' type='file' class='file-info-a' accept='.doc,.docx'/></li><li class='form-c'><lable>文本信息</lable><a class='xz-btn-c'>选择文件</a> <input  type='text' name='' id='' value='' class='file-name-c'  readonly='readonly' placeholder='仅支持txt格式'/><input onchange='getTextSize(this)' name='txt_addr' type='file' class='file-info-c' accept='.txt'/></li><li class='form-b'><lable>图片信息</lable><a class='xz-btn-b'>选择文件</a> <input type='text' name='' id='' value='' class='file-name-b' readonly='readonly' placeholder='仅支持jpg/png格式图片'/><input onchange='getPhotoSize(this)' name='picture_addr' type='file' class='file-info-b' accept='.png,.jpg,.jpeg'/></li><li><a class='del'>删除</a></li></ul></div></li>");				
 			delcharacter.shift();
 			
 			}
 			
 		};
-	});*/
-
-
-
-/*	//页面加载事件 添加所有的毒素
+	});
+	/*添加毒素信息*/
 	$(".add-dsxx").click(function(){
-		$('.addds').append('' +
-			'<li class="edittable-middle">' +
-			'<div class="editmiddle-left">毒素信息</div>' +
-			'<div class="editmiddle-right"><ul><li><lable>毒素种类</lable>' +
-			'<select name="toxins" id="toxins" class="toxins">' +
-			'<option value="0" >请选择</option></select>' +
-			'<span id="toxin_id" ></span></li><li><lable>毒素含量</lable>' +
-			'<input name="toxinCount" type="text"  class="toxinCount"  maxlength="10" placeholder="毒素含量最大可输入十位"/>' +
-			'<span id="toxin_count" ></span></li><li><a class="del">删除</a></li></ul></div></li>')
+		$('.addds').append('<li class="edittable-middle"><div class="editmiddle-left">毒素信息</div><div class="editmiddle-right"><ul><li><lable>毒素种类</lable><select name="toxin_id" id="toxin_id1" onblur="checktoxin_id()"><option value="0" >请选择</option></select><span id="toxin_id" ></span></li><li><lable>毒素含量</lable><input name="toxin_count" type="text"  onblur="checktoxin_count()"  maxlength="10" placeholder="毒素含量最大可输入十位"/><span id="toxin_count" ></span></li><li><a class="del">删除</a></li></ul></div></li>')
 		//alert(1);
 		$.ajax({
-			url:"findtoxins",
+			url:"addtextoption",
 			type:"post",
 			dataType:"json",
-			success:function(res){//形式参数  真正的参数 是控制层返回的
+			sync:false,
+			success:function(res){
 				//alert(res);
-				$(".toxins").empty();
-				for (var j = 0; j < res.length; j++) {
-					$(".toxins").append("<option value='"+res[j].id+"'>"+res[j].toxinType+"</option>")
-				}
+				$.each(res,function(index,item){
+				$('div[class=addds] li:last-child').find('select').append('<option value='+(index+1)+'>'+item.toxin_type+'</option>');
+				});
 			}
 		});
-	});*/
-    /*	var delcharacter = [];
-
-    	$(".ypbh").on("input",function(){
-            if($(".add-con").find("li").length !==0){
-                $(".sample").each(function(){
-                    var m = $(".ypbh").val();
-                    $(this).val(m);
-                })
-            }
-        })*/
+	});
+	var delcharacter = [];
+	
+	$(".ypbh").on("input",function(){
+		if($(".add-con").find("li").length !==0){
+			$(".sample").each(function(){
+				var m = $(".ypbh").val();
+				$(this).val(m);
+			})
+		}
+	})
 	//删除新增信息
-	/*$(".table-con").on("click",'.del',function(){
+	$(".table-con").on("click",'.del',function(){
 		var y = $(this).parents(".editbottom-right").siblings(".editbottom-left").html().substring(6,7)
 		delcharacter.push(y);
 		delcharacter.sort();
@@ -66,9 +55,9 @@ $(function(){
 		delcharacter.sort();
 		$(this).parents(".edittable-middle").remove();
 	})
-	*/
 	
-/*	//上传文件
+	
+	//上传文件
 	$(".table-con").on("click",'.xz-btn-a',function(){
 		$(this).siblings(".file-info-a").trigger('click');
 	})
@@ -87,7 +76,7 @@ $(function(){
 	$(".table-con").on("change",'.file-info-c',function(){
 		$(this).siblings(".file-name-c").val($(this).val());
 	})
-	*/
+	
 
 	//日历
 	$('#dd').calendar({
@@ -191,4 +180,9 @@ $(function(){
 		})
 	})*/
 	//上传文件
+	
+	
+	
+	
+
 });

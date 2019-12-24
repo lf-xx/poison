@@ -5,6 +5,8 @@ import com.lff.poison.domain.BacterialStrainInfo;
 import com.lff.poison.domain.SampleToxin;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface BacterialStrainInfoMapper {
     int deleteByPrimaryKey(Integer id);
@@ -19,5 +21,8 @@ public interface BacterialStrainInfoMapper {
 
     int updateByPrimaryKey(BacterialStrainInfo record);
 
-    public void inserinto(BacterialStrainInfo strainInfo);
+    void inserinto(BacterialStrainInfo strainInfo);
+
+    //查询当前编号下的所有菌株
+    public List<BacterialStrainInfo> selectBySampleId(String sampleNum);
 }

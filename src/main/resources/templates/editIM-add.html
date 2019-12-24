@@ -1,307 +1,1287 @@
-
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>编辑信息</title>
-		<link rel="stylesheet" type="text/css" href="../static/css/reset.css"/>
-		<link rel="stylesheet" type="text/css" href="../static/css/editIM.css"/>
-		<link rel="stylesheet" href="../static/css/calendar.css" />
+<head>
+    <meta charset="UTF-8">
+    <title>编辑信息</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="../static/css/editIM.css"/>
+    <link rel="stylesheet" href="../static/css/calendar.css"/>
 
-		<script src="../static/js/jquery.js"></script>
-		<script type="text/javascript" src="../static/js/calendar.js"></script>
-		<script src="../static/js/editIM.js"></script>
-		<!--<script src="../static/js/checkUpdateIM.js"></script>
-		<script type="text/javascript" src="../static/js/checkUserUpdateForm.js" charset="utf-8"></script>-->
-		<script type="text/javascript">
-			//新增方法
-			function save_sample(){
-				alert(11);
-				//获取样品区域
-				var sampleId = $("#sampleIid").val();
-				var samplingPeople = $("#sampleIpeople").val();
-				var pollutionRate = $("#pollutionRate").val();
-				var seasonal= $("#seasonal1").val();
-				var description = $("#description1").val();
-				var harvestTime = $("#harvestTime").val()
-				var samplingTime = $("#samplingTime").val()
-				var cropCategoryId = $("#cptype").val()
-				var breed = $("#cptypess").val()
-				var province = $("#shen").val()
-				var city = $("#shi").val()
-				var county = $("#xian").val()
-				//获取毒素
-				var toxins = [];//定义一个空数组
-				$("select[class='toxins']").each(function(p){//把所有被选中的复选框的值存入数组
-					toxins[p] =$(this).val();
-				});
-				//alert(toxins)
+    <script src="../static/js/jquery-2.1.0.js"></script>
+    <!--<script type="text/javascript" src="../static/js/calendar.js"></script>-->
+    <!--<script src="../static/js/editIM.js"></script>-->
+    <script src="../static/js/yibu.js" type="text/javascript"></script>
+    <script src="../static/js/breedyibo.js" type="text/javascript"></script>
+    <script src="../static/js/dusuyibu.js" type="text/javascript"></script>
+    <script src="../static/js/junzhuyibo.js" type="text/javascript"></script>
 
-				var toxinCount = [];//定义一个空数组
-				$("input[class='toxinCount']").each(function(z){//把所有被选中的复选框的值存入数组
-					toxinCount[z] =$(this).val();
-				});
-				//alert(toxinCount)
-				var cropCategory = $("#cptype").val();
-				alert(22)
-				$.ajax({
-					url:'saveSampleinfo',//地址
-					data:{
-						"sampleId": sampleId,
-						"samplingPeople": samplingPeople,
-						"toxins": toxins,
-						"toxinCount": toxinCount,
-						"pollutionRate":pollutionRate,
-						"seasonal":seasonal,
-						"description":description,
-						"harvestTime":harvestTime,
-						"samplingTime":samplingTime,
-						"cropCategoryId":cropCategoryId,
-						"breed":breed,
-						"province":province,
-						"city":city,
-						"county":county
-					},
-					traditional: true,
-					dataType:'json',//数据类型
-					type:'post',//类型
-					//async:false,
-					//请求成功
-					success:function(result){
-						alert(result);
-						if(result=="SUCCESS"){
-							window.location.href="IM.html";
-						}else if(result=="ERROR"){
-							alert("添加失败");
-						}else{
-							alert("其他未知错误")
-						}
-					},
-				})
-			}
-			//回显地址三级联动
-			$(function () {
-				$.ajax({
-					url: "findProvince",
-					dataType: "json",
-					type: "get",
-
-					success: function (result) {
-						$("#shen").empty();
-						var v = ' <option value="">请选择</option>';
-						for (var i = 0; i < result.length; i++) {
-							v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
-						}
-						$("#shen").append(v);
-					}
-				});
+    <script type="text/javascript">
+        //新增方法
+        function save_sample() {
+            //获取样品区域
+            var sampleId = $("#sampleIid").val();
+            var samplingPeople = $("#sampleIpeople").val();
+            var pollutionRate = $("#pollutionRate").val();
+            var seasonal = $("#seasonal1").val();
+            var description = $("#description1").val();
+            var harvestTime = $("#harvestTime").val()
+            var samplingTime = $("#samplingTime").val()
+            var cropCategoryId = $("#cptype").val()
+            var breed = $("#cptypess").val()
+            var province = $("#shen").val()
+            var city = $("#shi").val()
+            var county = $("#xian").val()
+            //获取毒素
 
 
-				$("#shi").change(function () {
-					var xian = $("#shi").val();
+            var toxins = [];//定义一个空数组
+            $("select[class='toxins']").each(function (p) {//把所有被选中的复选框的值存入数组
+                toxins[p] = $(this).val();
+            });
+            //alert(toxins)
 
-					$.ajax({
-						url: "findTown",
-						type: "post",
-						datatype: "json",
-						data: {"xian": xian},
-						success: function (result) {
-							$("#xian").empty();
-							var v = ' <option value="">请选择</option>';
-							for (var i = 0; i < result.length; i++) {
-								v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
-							}
-							$("#xian").append(v);
-						}
-					})
-				});
+            var toxinCount = [];//定义一个空数组
+            $("input[class='toxinCount']").each(function (z) {//把所有被选中的复选框的值存入数组
+                toxinCount[z] = $(this).val();
+            });
+            //alert(toxinCount)
+            var cropCategory = $("#cptype").val();
+            //var originalNum =$("#original_num").val()
+            var originalNum = [];
+            $("input[name='originalNum']").each(function (t) {
+                originalNum[t] = $(this).val()
+            });
+            var wordAddr = [];
+            $("input[name='docaddr']").each(function (w) {
+                wordAddr[w] = $(this).val();
+            })
+            alert(wordAddr)
+            var txtAddr = [];
+            $("input[name='txtaddr']").each(function (q) {
+                txtAddr[q] = $(this).val();
+            });
+            alert(txtAddr)
+            var pictureAddr = [];
+            $("input[name='picaddr']").each(function (u) {
+                pictureAddr[u] = $(this).val();
+            });
+            alert(pictureAddr)
+            $.ajax({
+                url: 'saveSampleinfo',//地址
+                data: {
+                    "sampleId": sampleId,
+                    "samplingPeople": samplingPeople,
+                    "toxins": toxins,
+                    "toxinCount": toxinCount,
+                    "pollutionRate": pollutionRate,
+                    "seasonal": seasonal,
+                    "description": description,
+                    "harvestTime": harvestTime,
+                    "samplingTime": samplingTime,
+                    "cropCategoryId": cropCategoryId,
+                    "breed": breed,
+                    "province": province,
+                    "city": city,
+                    "county": county,
+                    "originalNum": originalNum,
+                    "wordAddr": wordAddr,
+                    "txtAddr": txtAddr,
+                    "pictureAddr": pictureAddr
+                },
+                traditional: true,
+                dataType: 'json',//数据类型
+                type: 'get',//类型
+                //请求成功
+                success: function (result) {
+                    alert(result);
+                    if (result == "SUCCESS") {
+                        //window.location.href="IM.html";
+                        alert("添加成功！！！")
+                    } else if (result == "ERROR") {
+                        alert("添加失败");
+                    } else {
+                        alert("其他未知错误")
+                    }
+                },
+            })
+        }
 
-				$("#shen").change(function () {
-					var shi = $("#shen").val();
-					$.ajax({
-						url: "findCity",
-						type: "post",
-						datatype: "json",
-						data: {"shi": shi},
-						success: function (result) {
-							$("#shi").empty();
-							var v = ' <option value="">请选择</option>';
-							for (var i = 0; i < result.length; i++) {
-								v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
-							}
-							$("#shi").append(v);
-						}
-					})
-				})
-			})
-			//回显种类两级联动
-			$(function () {
-				$.ajax({
-					url: "findCropCategory",
-					dataType: "json",
-					type: "post",
-					success: function (result) {
-						$("#cptype").empty();
-						var v = ' <option value="">请选择</option>';
-						for (var i = 0; i < result.length; i++) {
-							v += ' <option value="' + result[i].id + '">' + result[i].cropCategory + '</option>'
-						}
-						$("#cptype").append(v);
-					}
-				})
+        //回显地址三级联动
+        $(function () {
+            //alert(1);
+            $.ajax({
+                url: "findProvince",
+                dataType: "json",
+                type: "get",
+                success: function (result) {
+                    $("#shen").empty();
+                    var v = ' <option value="">请选择</option>';
+                    for (var i = 0; i < result.length; i++) {
+                        v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
+                    }
+                    $("#shen").append(v);
+                }
+            });
 
-			})
+            $("#shi").change(function () {
+                var xian = $("#shi").val();
 
-			function cptypes(){
-				//alert("123123");
-				var cptypess = $("#cptype").val();
-				$.ajax({
-					url: "findCropSpecies",
-					type: "post",
-					datatype: "json",
-					data: {"cptypess": cptypess},
-					success: function (result) {
-						$("#cptypess").empty();
-						var v = ' <option value="">请选择</option>';
-						for (var j = 0; j < result.length; j++) {
-							v += ' <option value="' + result[j].id + '">' + result[j].cropSpecies
-						}
-						$("#cptypess").append(v);
+                $.ajax({
+                    url: "findTown",
+                    type: "post",
+                    datatype: "json",
+                    data: {"xian": xian},
+                    success: function (result) {
+                        $("#xian").empty();
+                        var v = ' <option value="">请选择</option>';
+                        for (var i = 0; i < result.length; i++) {
+                            v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
+                        }
+                        $("#xian").append(v);
+                    }
+                })
+            });
 
-					}
-				})
-			}
+            $("#shen").change(function () {
+                var shi = $("#shen").val();
+                $.ajax({
+                    url: "findCity",
+                    type: "post",
+                    datatype: "json",
+                    data: {"shi": shi},
+                    success: function (result) {
+                        $("#shi").empty();
+                        var v = ' <option value="">请选择</option>';
+                        for (var i = 0; i < result.length; i++) {
+                            v += ' <option value="' + result[i].code + '">' + result[i].name + '</option>'
+                        }
+                        $("#shi").append(v);
+                    }
+                })
+            });
 
-		</script>
-<style>
-	html,body{height: 100%}
-</style>
-	</head>
-	<body>
-		<div class="contaner">
+        });
+    </script>
+    <style>
+        html, body {
+            height: 100%
+        }
+    </style>
+</head>
+<body>
+<div class="contaner">
 
-			<div class="im-content">
-				<div class="im-heade">
-					<div class="imhead-title">当前页面：<a>新增信息</a></div>
-				</div>
-		<form  id="search_form" enctype="multipart/form-data" method="post" accept-charset="utf-8">
-				<div class="editim-table">
+    <div class="im-content">
+        <div class="im-heade">
+            <div class="imhead-title">当前页面：<a>新增信息</a></div>
+        </div>
+        <form id="search_form" enctype="multipart/form-data" method="post" accept-charset="utf-8">
+            <div class="editim-table">
 
-					<ul class="table-con">
-						<li class="edittable-top">
-							<div class="edittable-left">采样信息</div>
-							<div class="edittable-right">
-								<ul>
-									<li>
-										<lable>样品编号</lable>
-										<input class="ypbh" id="sampleIid" name="sample_id" placeholder="首字母英文，长度为5-15位" value="" onblur="checksample_id()" maxlength="15" type="">
+                <ul class="table-con">
+                    <li class="edittable-top">
+                        <div class="edittable-left">采样信息</div>
+                        <div class="edittable-right">
+                            <ul>
+                                <li>
+                                    <lable>样品编号</lable>
+                                    <input class="ypbh" id="sampleIid" name="sample_id" placeholder="首字母英文，长度为5-15位"
+                                           value="" onblur="checksample_id()" maxlength="15" type="">
 
-									</li>
+                                </li>
 
-									<li>
-										<lable>农产品加工原料类别</lable>
-										<select class="sel" onchange="cptypes()" name="crop_category_id" id="cptype">
-												<!--<option value="0">请选择</option>
-						                        <option value="1">水果类</option>
-						                        <option value="2">谷物类</option>
-						                        <option value="3">油料类</option>
-						                        <option value="4">坚果类</option>
-						                        <option value="5">香辛类</option>
-						                        <option value="6">饲料类</option>-->
-										</select>
-										<span id="crop_category_id"></span>
-									</li>
-									<li>
-										<lable>品种</lable>
-										<select class="sel" name="breed" id="cptypess">
-											<option class="cpzl" value="">请选择</option>
-										</select>
-										<span id="breed"></span>
-									</li>
+                                <li>
+                                    <lable>农产品加工原料类别</lable>
+                                    <select class="sel" onchange="cptypes()" name="crop_category_id" id="cptype">
 
-						<li>
-										<div class="width">
-											 <lable>地点</lable>
-					<!--		  <input value="北京" id="shengs" type="hidden">
-							  <input value="北京市" id="shisss" type="hidden">
-							  <input value="东城区" id="xiansss" type="hidden">
+                                    </select>
+                                    <span id="crop_category_id"></span>
+                                </li>
+                                <li>
+                                    <lable>品种</lable>
+                                    <select class="sel" name="breed" id="cptypess">
+                                        <option class="cpzl" value="">请选择</option>
+                                    </select>
+                                    <span id="breed"></span>
+                                </li>
 
-							  <input value="北京市" name="city" id="city" type="hidden">
-							  <input value="东城区" name="county" id="county" type="hidden">
-							   <input value="123" id="wsx" type="hidden">-->
-	                             <select class="province" id="shen" onchange="changeShen(this.value,'shen','shi','xian')">
+                                <li>
+                                    <div class="width">
+                                        <lable>地点</lable>
+
+                                        <select class="province" id="shen"
+                                                onchange="changeShen(this.value,'shen','shi','xian')">
 
 
-				        		<option class="shengde" selected="selected" value="110000">北京</option><option class="shengde" value="120000">天津</option><option class="shengde" value="130000">河北</option><option class="shengde" value="140000">山西</option><option class="shengde" value="150000">内蒙古</option><option class="shengde" value="210000">辽宁</option><option class="shengde" value="220000">吉林</option><option class="shengde" value="230000">黑龙江</option><option class="shengde" value="310000">上海</option><option class="shengde" value="320000">江苏</option><option class="shengde" value="330000">浙江</option><option class="shengde" value="340000">安徽</option><option class="shengde" value="350000">福建</option><option class="shengde" value="360000">江西</option><option class="shengde" value="370000">山东</option><option class="shengde" value="410000">河南</option><option class="shengde" value="420000">湖北</option><option class="shengde" value="430000">湖南</option><option class="shengde" value="440000">广东</option><option class="shengde" value="450000">广西</option><option class="shengde" value="460000">海南</option><option class="shengde" value="500000">重庆</option><option class="shengde" value="510000">四川</option><option class="shengde" value="520000">贵州</option><option class="shengde" value="530000">云南</option><option class="shengde" value="540000">西藏</option><option class="shengde" value="610000">陕西</option><option class="shengde" value="620000">甘肃</option><option class="shengde" value="630000">青海</option><option class="shengde" value="640000">宁夏</option><option class="shengde" value="650000">新疆</option><option class="shengde" value="710000">台湾</option><option class="shengde" value="810000">香港</option><option class="shengde" value="820000">澳门</option></select><span>省</span>
-				        		<select class="city" onblur="checkprovince()" id="shi" onchange="changeShi(this.value,'shen','shi','xian')"><option value="0" class="shide">请选择</option><option class="shide" selected="selected" value="110100">北京市</option></select><span>市</span>
-				        		<select onblur="checkprovince()" class="county" id="xian" onchange="xianwsx()"><option value="0" class="xiande">请选择</option><option class="xiande" selected="selected" value="110101">东城区</option><option class="xiande" value="110102">西城区</option><option class="xiande" value="110103">崇文区</option><option class="xiande" value="110104">宣武区</option><option class="xiande" value="110105">朝阳区</option><option class="xiande" value="110106">丰台区</option><option class="xiande" value="110107">石景山区</option><option class="xiande" value="110108">海淀区</option><option class="xiande" value="110109">门头沟区</option><option class="xiande" value="110111">房山区</option><option class="xiande" value="110112">通州区</option><option class="xiande" value="110113">顺义区</option><option class="xiande" value="110114">昌平区</option><option class="xiande" value="110115">大兴区</option><option class="xiande" value="110116">怀柔区</option><option class="xiande" value="110117">平谷区</option><option class="xiande" value="110228">密云县</option><option class="xiande" value="110229">延庆县</option></select><span>县</span>
-										</div>
-										<span class="xc">
+                                            <option class="shengde" selected="selected" value="110000">北京</option>
+                                            <option class="shengde" value="120000">天津</option>
+                                            <option class="shengde" value="130000">河北</option>
+                                            <option class="shengde" value="140000">山西</option>
+                                            <option class="shengde" value="150000">内蒙古</option>
+                                            <option class="shengde" value="210000">辽宁</option>
+                                            <option class="shengde" value="220000">吉林</option>
+                                            <option class="shengde" value="230000">黑龙江</option>
+                                            <option class="shengde" value="310000">上海</option>
+                                            <option class="shengde" value="320000">江苏</option>
+                                            <option class="shengde" value="330000">浙江</option>
+                                            <option class="shengde" value="340000">安徽</option>
+                                            <option class="shengde" value="350000">福建</option>
+                                            <option class="shengde" value="360000">江西</option>
+                                            <option class="shengde" value="370000">山东</option>
+                                            <option class="shengde" value="410000">河南</option>
+                                            <option class="shengde" value="420000">湖北</option>
+                                            <option class="shengde" value="430000">湖南</option>
+                                            <option class="shengde" value="440000">广东</option>
+                                            <option class="shengde" value="450000">广西</option>
+                                            <option class="shengde" value="460000">海南</option>
+                                            <option class="shengde" value="500000">重庆</option>
+                                            <option class="shengde" value="510000">四川</option>
+                                            <option class="shengde" value="520000">贵州</option>
+                                            <option class="shengde" value="530000">云南</option>
+                                            <option class="shengde" value="540000">西藏</option>
+                                            <option class="shengde" value="610000">陕西</option>
+                                            <option class="shengde" value="620000">甘肃</option>
+                                            <option class="shengde" value="630000">青海</option>
+                                            <option class="shengde" value="640000">宁夏</option>
+                                            <option class="shengde" value="650000">新疆</option>
+                                            <option class="shengde" value="710000">台湾</option>
+                                            <option class="shengde" value="810000">香港</option>
+                                            <option class="shengde" value="820000">澳门</option>
+                                        </select><span>省</span>
+                                        <select class="city" onblur="checkprovince()" id="shi"
+                                                onchange="changeShi(this.value,'shen','shi','xian')">
+                                            <option value="0" class="shide">请选择</option>
+                                            <option class="shide" selected="selected" value="110100">北京市</option>
+                                        </select><span>市</span>
+                                        <select onblur="checkprovince()" class="county" id="xian" onchange="xianwsx()">
+                                            <option value="0" class="xiande">请选择</option>
+                                            <option class="xiande" selected="selected" value="110101">东城区</option>
+                                            <option class="xiande" value="110102">西城区</option>
+                                            <option class="xiande" value="110103">崇文区</option>
+                                            <option class="xiande" value="110104">宣武区</option>
+                                            <option class="xiande" value="110105">朝阳区</option>
+                                            <option class="xiande" value="110106">丰台区</option>
+                                            <option class="xiande" value="110107">石景山区</option>
+                                            <option class="xiande" value="110108">海淀区</option>
+                                            <option class="xiande" value="110109">门头沟区</option>
+                                            <option class="xiande" value="110111">房山区</option>
+                                            <option class="xiande" value="110112">通州区</option>
+                                            <option class="xiande" value="110113">顺义区</option>
+                                            <option class="xiande" value="110114">昌平区</option>
+                                            <option class="xiande" value="110115">大兴区</option>
+                                            <option class="xiande" value="110116">怀柔区</option>
+                                            <option class="xiande" value="110117">平谷区</option>
+                                            <option class="xiande" value="110228">密云县</option>
+                                            <option class="xiande" value="110229">延庆县</option>
+                                        </select><span>县</span>
+                                    </div>
+                                    <span class="xc">
 											<input placeholder="可为空" id="xiang" name="township" value="" type="text">乡
 											<input placeholder="可为空" id="cun" name="village" value="" type="text">村
-											<input placeholder="可为空" id="hu" name="household" value="" type="text"><span>户</span>
+											<input placeholder="可为空" id="hu" name="household" value=""
+                                                   type="text"><span>户</span>
 										</span>
 
-									</li>
+                                </li>
 
-									<li>
-										<lable>收获时间</lable>
-										<input name="harvest_time" id="harvestTime" value="" placeholder="选择日期" type="date">
-										<div style="width: 280px; height: 330px; left: 549.65px; top: 351px; z-index: 999; display: none;" class="calendar calendar-modal calendar-d" id="dd"><div style="width: 280px;" class="calendar-inner"><div class="calendar-views"><div style="width: 280px;" class="view view-date"><div class="calendar-hd"><a href="javascript:;" data-calendar-display-date="" class="calendar-display">2018/<span class="m">3</span></a><div class="calendar-arrow"><span class="prev" title="上一月" data-calendar-arrow-date="">&lt;</span><span class="next" title="下一月" data-calendar-arrow-date="">&gt;</span></div></div><div style="width: 280px; height: 280px;" class="calendar-ct"><ol class="week"><li style="width:40px;height:40px;line-height:40px">日</li><li style="width:40px;height:40px;line-height:40px">一</li><li style="width:40px;height:40px;line-height:40px">二</li><li style="width:40px;height:40px;line-height:40px">三</li><li style="width:40px;height:40px;line-height:40px">四</li><li style="width:40px;height:40px;line-height:40px">五</li><li style="width:40px;height:40px;line-height:40px">六</li></ol><ul class="date-items"><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">10</li></ol></li><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class=" now" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">7</li></ol></li><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li></ol></li></ul></div></div><div style="width: 280px;" class="view view-month"><div class="calendar-hd"><a href="javascript:;" data-calendar-display-month="" class="calendar-display">2018</a><div class="calendar-arrow"><span class="prev" title="上一年" data-calendar-arrow-month="">&lt;</span><span class="next" title="下一年" data-calendar-arrow-month="">&gt;</span></div></div><ol style="width: 280px; height: 280px;" class="calendar-ct month-items"><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">1月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">2月</li><li class="now" style="width:70px;height:70px;line-height:70px" data-calendar-month="">3月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">4月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">5月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">6月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">7月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">8月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">9月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">10月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">11月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">12月</li></ol></div></div></div><div class="calendar-label"><p>HelloWorld</p><i></i></div></div>
-										<span class="err"></span>
-									</li>
-									<!-- onblur="checksampling_time()" -->
-									<li>
-										<lable>取样时间</lable>
-										<input name="sampling_time" id="samplingTime" value="" placeholder="选择日期" type="date">
-										<div style="width: 280px; height: 330px; left: 549.65px; top: 393px; z-index: 999; display: none;" class="calendar calendar-modal calendar-d" id="dd-b"><div style="width: 280px;" class="calendar-inner"><div class="calendar-views"><div style="width: 280px;" class="view view-date"><div class="calendar-hd"><a href="javascript:;" data-calendar-display-date="" class="calendar-display">2018/<span class="m">3</span></a><div class="calendar-arrow"><span class="prev" title="上一月" data-calendar-arrow-date="">&lt;</span><span class="next" title="下一月" data-calendar-arrow-date="">&gt;</span></div></div><div style="width: 280px; height: 280px;" class="calendar-ct"><ol class="week"><li style="width:40px;height:40px;line-height:40px">日</li><li style="width:40px;height:40px;line-height:40px">一</li><li style="width:40px;height:40px;line-height:40px">二</li><li style="width:40px;height:40px;line-height:40px">三</li><li style="width:40px;height:40px;line-height:40px">四</li><li style="width:40px;height:40px;line-height:40px">五</li><li style="width:40px;height:40px;line-height:40px">六</li></ol><ul class="date-items"><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">10</li></ol></li><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class=" now" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">7</li></ol></li><li style="width: 280px;"><ol class="days"><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="old" data-calendar-day="">31</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">5</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">6</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">7</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">8</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">9</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">10</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">11</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">12</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">13</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">14</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">15</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">16</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">17</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">18</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">19</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">20</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">21</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">22</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">23</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">24</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">25</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">26</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">27</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">28</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">29</li><li style="width:40px;height:40px;line-height:40px" class="" data-calendar-day="">30</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">1</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">2</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">3</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">4</li><li style="width:40px;height:40px;line-height:40px" class="new" data-calendar-day="">5</li></ol></li></ul></div></div><div style="width: 280px;" class="view view-month"><div class="calendar-hd"><a href="javascript:;" data-calendar-display-month="" class="calendar-display">2018</a><div class="calendar-arrow"><span class="prev" title="上一年" data-calendar-arrow-month="">&lt;</span><span class="next" title="下一年" data-calendar-arrow-month="">&gt;</span></div></div><ol style="width: 280px; height: 280px;" class="calendar-ct month-items"><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">1月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">2月</li><li class="now" style="width:70px;height:70px;line-height:70px" data-calendar-month="">3月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">4月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">5月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">6月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">7月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">8月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">9月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">10月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">11月</li><li style="width:70px;height:70px;line-height:70px" data-calendar-month="">12月</li></ol></div></div></div><div class="calendar-label"><p>HelloWorld</p><i></i></div></div>
-										<span class="err"></span>
-									</li>
+                                <li>
+                                    <lable>收获时间</lable>
+                                    <input name="harvest_time" id="harvestTime" value="" placeholder="选择日期" type="date">
+                                    <div style="width: 280px; height: 330px; left: 549.65px; top: 351px; z-index: 999; display: none;"
+                                         class="calendar calendar-modal calendar-d" id="dd">
+                                        <div style="width: 280px;" class="calendar-inner">
+                                            <div class="calendar-views">
+                                                <div style="width: 280px;" class="view view-date">
+                                                    <div class="calendar-hd"><a href="javascript:;"
+                                                                                data-calendar-display-date=""
+                                                                                class="calendar-display">2018/<span
+                                                            class="m">3</span></a>
+                                                        <div class="calendar-arrow"><span class="prev" title="上一月"
+                                                                                          data-calendar-arrow-date="">&lt;</span><span
+                                                                class="next" title="下一月" data-calendar-arrow-date="">&gt;</span>
+                                                        </div>
+                                                    </div>
+                                                    <div style="width: 280px; height: 280px;" class="calendar-ct">
+                                                        <ol class="week">
+                                                            <li style="width:40px;height:40px;line-height:40px">日</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">一</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">二</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">三</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">四</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">五</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">六</li>
+                                                        </ol>
+                                                        <ul class="date-items">
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">10
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class=" now" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">7
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div style="width: 280px;" class="view view-month">
+                                                    <div class="calendar-hd"><a href="javascript:;"
+                                                                                data-calendar-display-month=""
+                                                                                class="calendar-display">2018</a>
+                                                        <div class="calendar-arrow"><span class="prev" title="上一年"
+                                                                                          data-calendar-arrow-month="">&lt;</span><span
+                                                                class="next" title="下一年" data-calendar-arrow-month="">&gt;</span>
+                                                        </div>
+                                                    </div>
+                                                    <ol style="width: 280px; height: 280px;"
+                                                        class="calendar-ct month-items">
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">1月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">2月
+                                                        </li>
+                                                        <li class="now" style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">3月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">4月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">5月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">6月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">7月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">8月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">9月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">10月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">11月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">12月
+                                                        </li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="calendar-label"><p>HelloWorld</p><i></i></div>
+                                    </div>
+                                    <span class="err"></span>
+                                </li>
+                                <!-- onblur="checksampling_time()" -->
+                                <li>
+                                    <lable>取样时间</lable>
+                                    <input name="sampling_time" id="samplingTime" value="" placeholder="选择日期"
+                                           type="date">
+                                    <div style="width: 280px; height: 330px; left: 549.65px; top: 393px; z-index: 999; display: none;"
+                                         class="calendar calendar-modal calendar-d" id="dd-b">
+                                        <div style="width: 280px;" class="calendar-inner">
+                                            <div class="calendar-views">
+                                                <div style="width: 280px;" class="view view-date">
+                                                    <div class="calendar-hd"><a href="javascript:;"
+                                                                                data-calendar-display-date=""
+                                                                                class="calendar-display">2018/<span
+                                                            class="m">3</span></a>
+                                                        <div class="calendar-arrow"><span class="prev" title="上一月"
+                                                                                          data-calendar-arrow-date="">&lt;</span><span
+                                                                class="next" title="下一月" data-calendar-arrow-date="">&gt;</span>
+                                                        </div>
+                                                    </div>
+                                                    <div style="width: 280px; height: 280px;" class="calendar-ct">
+                                                        <ol class="week">
+                                                            <li style="width:40px;height:40px;line-height:40px">日</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">一</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">二</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">三</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">四</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">五</li>
+                                                            <li style="width:40px;height:40px;line-height:40px">六</li>
+                                                        </ol>
+                                                        <ul class="date-items">
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">10
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class=" now" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">7
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                            <li style="width: 280px;">
+                                                                <ol class="days">
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="old" data-calendar-day="">31
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">5
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">6
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">7
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">8
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">9
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">10
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">11
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">12
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">13
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">14
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">15
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">16
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">17
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">18
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">19
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">20
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">21
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">22
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">23
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">24
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">25
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">26
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">27
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">28
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">29
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="" data-calendar-day="">30
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">1
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">2
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">3
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">4
+                                                                    </li>
+                                                                    <li style="width:40px;height:40px;line-height:40px"
+                                                                        class="new" data-calendar-day="">5
+                                                                    </li>
+                                                                </ol>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div style="width: 280px;" class="view view-month">
+                                                    <div class="calendar-hd"><a href="javascript:;"
+                                                                                data-calendar-display-month=""
+                                                                                class="calendar-display">2018</a>
+                                                        <div class="calendar-arrow"><span class="prev" title="上一年"
+                                                                                          data-calendar-arrow-month="">&lt;</span><span
+                                                                class="next" title="下一年" data-calendar-arrow-month="">&gt;</span>
+                                                        </div>
+                                                    </div>
+                                                    <ol style="width: 280px; height: 280px;"
+                                                        class="calendar-ct month-items">
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">1月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">2月
+                                                        </li>
+                                                        <li class="now" style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">3月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">4月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">5月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">6月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">7月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">8月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">9月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">10月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">11月
+                                                        </li>
+                                                        <li style="width:70px;height:70px;line-height:70px"
+                                                            data-calendar-month="">12月
+                                                        </li>
+                                                    </ol>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="calendar-label"><p>HelloWorld</p><i></i></div>
+                                    </div>
+                                    <span class="err"></span>
+                                </li>
 
-									<li>
-										<lable>取样人</lable>
-										<input maxlength="15" id="sampleIpeople" placeholder="请输入取样人姓名" name="sampling_people" value="" type="">
-										<span id="sampling_people"></span>
-									</li>
-									<li class="jijie">
-										<lable>采集季节及气候特征</lable>
-										<textarea name="seasonal" id="seasonal1" rows="" cols=""></textarea>
-										<span id="seasonal"></span>
-									</li>
-									<li class="huanjing">
-										<lable>采集地、环境信息描述</lable>
-										<textarea name="description" id="description1" rows="" cols=""></textarea>
-										<span id="description"></span>
-									</li>
-									<li>
-										<lable>真菌污染率</lable>
-										<input name="pollution_rate" id="pollutionRate"  value="" maxlength="5" placeholder="不需要输入'%'" type="">
-										<span id="pollution_rate"></span>
-									</li>
-								</ul>
-							</div>
-						</li>
-						<div class="addds">
-						</div>
-						<div class="add-dsxx">+添加毒素信息</div>
-						<div class="add-con">
-						</div>
-					</ul>
+                                <li>
+                                    <lable>取样人</lable>
+                                    <input maxlength="15" id="sampleIpeople" placeholder="请输入取样人姓名"
+                                           name="sampling_people" value="" type="">
+                                    <span id="sampling_people"></span>
+                                </li>
+                                <li class="jijie">
+                                    <lable>采集季节及气候特征</lable>
+                                    <textarea name="seasonal" id="seasonal1" rows="" cols=""></textarea>
+                                    <span id="seasonal"></span>
+                                </li>
+                                <li class="huanjing">
+                                    <lable>采集地、环境信息描述</lable>
+                                    <textarea name="description" id="description1" rows="" cols=""></textarea>
+                                    <span id="description"></span>
+                                </li>
+                                <li>
+                                    <lable>真菌污染率</lable>
+                                    <input name="pollution_rate" id="pollutionRate" value="" maxlength="5"
+                                           placeholder="不需要输入'%'" type="">
+                                    <span id="pollution_rate"></span>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                    <div class="addds">
+                    </div>
+                    <div class="add-dsxx">+添加毒素信息</div>
+                    <div class="add-con">
+                    </div>
+                </ul>
+                <div class="add-ds add">+添加产毒菌株信息</div>
+                <div class="footer">
+                    <!--<a onclick="sub()" class="baocun">保存</a>-->
+                    <button onclick="save_sample()">保存</button>
+                    <!-- <a onclick="history.go(-1)" class="marginl">返回</a> -->
+                    <a onclick="history.go(-1)" class="marginl"
+                       href="javascript:if(confirm('确实要放弃操作吗?返回之后，所添加数据不会保存！'))location='selectAll'">返回</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 
-					<div class="add-ds add">+添加产毒菌株信息</div>
-					<div class="footer">
-						<!--<a onclick="sub()" class="baocun">保存</a>-->
-						<button onclick="save_sample()">保存</button>
-						<!-- <a onclick="history.go(-1)" class="marginl">返回</a> -->
-						<a onclick="history.go(-1)" class="marginl" href="javascript:if(confirm('确实要放弃操作吗?返回之后，所添加数据不会保存！'))location='selectAll'">返回</a>
-					</div>
-				</div>
-					</form>
-			</div>
-		</div>
-
-	</body>
-
-
-
+</body>
 </html>

@@ -11,4 +11,10 @@
   <insert id="inserinto">
         insert into sample_toxin(toxin_id,toxin_count,sample_info_id) values(#{toxinId},#{toxinCount},#{sampleInfoId});
   </insert>
+
+
+  <!--中间表-->
+  <select id="selectToxinBySampleId" resultMap="BaseResultMap">
+    select * from sample_toxin where sample_info_id = #{sampleId}
+  </select>
 </mapper>

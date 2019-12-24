@@ -25,4 +25,7 @@ public interface AddressTownMapper {
     AddressTown SelectByTownCode(String townCode);
 
     List<AddressTown> selecteAll(String xian);
+
+    //根据名称和市的code查询
+    List<AddressTown> queryByNameAndPCCode();
 }

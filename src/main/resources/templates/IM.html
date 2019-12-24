@@ -11,10 +11,8 @@
     <meta http-equiv="description" content="This is my page">
     <title>信息管理</title>
     <link rel="stylesheet" type="text/css" href="../static/css/reset.css"/>
-    <script src="../static/js/jquery.js"></script>
-    <!--
+    <script src="../static/js/jquery-2.1.0.js"></script>
         <script src="../static/js/IM-index.js"></script>
-    -->
     <link rel="stylesheet" type="text/css" href="../static/css/IM-index.css"/>
     <script src="../static/js/super.js"></script>
     <style>
@@ -389,14 +387,14 @@
             <div class="oper">
                 <ul>
                     <li class="btn-top"><a href="intoadd" class="dt">新增单条</a>
-                        <form class="form-b" action="rest/excel/updateExcel" method="post" enctype="multipart/form-data"
+                        <form class="form-b" action="poiInto" method="post" enctype="multipart/form-data"
                               id="excelForm">
                             <input type="file" name="file" class="file-info-b  file-info-b-1" accept=".xlsx">
                             <a class="xz-btn-b xz-btn-b-1">选择文件</a>
                             <input type="text" name="" id="" value="" class="vall vall-1" readonly>
-                            <input class="submit-b" type="button" value="导入样品信息">
+                            <input class="submit-b" type="submit" name="daoru"   value="导入样品信息">
                         </form>
-                        <a class="mb">下载模板</a> <br>
+                        <a class="mb" th:href="@{'poiDownLoad'}">下载模板</a> <br>
                         <a class="pl" onclick="manydelete()">批量删除</a>
 
                         <!-- 产毒菌株信息的导入 -->
@@ -407,7 +405,7 @@
                             <input type="text" name="" id="flag" value="" class="vall vall-c" readonly>
                             <input class="submit-b submit-c" type="button" value="导入菌株信息">
                         </form>
-                        <a href="javascript:void(0)" class="dc">信息导出</a></li>
+                        <a th:href="@{'poiOut'}">信息导出</a></li>
                 </ul>
             </div>
         </div>
@@ -428,7 +426,6 @@
                     <th class="w9">操作</th>
                 </tr>
                 </thead>
-                <tbody>
                 <tr th:each="sample : ${pageInfo.list}">
                     <td><input class="testyangpin" name="duoxuan" th:value="${sample.id}" type="checkbox"></td>
                     <td class="ybbh" th:text="${sample.sampleId}"></td>
@@ -439,20 +436,13 @@
                     <!-- <td th:text="${#numbers.formatPercent(sample.pollutionRate)}"></td>-->
                     <td class="pollutionRateStr" th:text="${sample.pollutionRateStr}"></td>
                     <td th:text="${sample.toxinsss}"></td>
-                    <td><a href="editIM.html">编辑</a>
+                    <td><a th:href="@{'findAllEdit?id='+${sample.id}}" >编辑</a>
                         | <a th:href="@{'deleteOneBySampleId?sampleId='+${sample.sampleId}}">删除</a>
                         <!--href="javascript:if(confirm('确实要删除吗?')) location='deleteOneBySampleId?sampleId='+${sample.sampleId}+''"-->
                     </td>
                 </tr>
-                </tbody>
             </table>
-          <!--  <p>当前 <span th:text="${pageInfo.pageNum}"></span> 页,总 <span th:text="${pageInfo.pages}"></span> 页,共 <span
-                    th:text="${pageInfo.total}"></span> 条记录</p>
-            <a th:href="@{/selectAll}">首页</a>
-            <a th:href="@{/selectAll(pageNum=${pageInfo.hasPreviousPage}?${pageInfo.prePage}:1)}">上一页</a>
-            <a th:href="@{/selectAll(pageNum=${pageInfo.hasNextPage}?${pageInfo.nextPage}:${pageInfo.pages})}">下一页</a>
-            <a th:href="@{/selectAll(pageNum=${pageInfo.pages})}">尾页</a>-->
-            </table>
+
         </div>
         <div>
             <a class="allpage"><b th:text="'共 '+ ${pageInfo.pages}+ ' 页'"></b></a>
@@ -539,6 +529,11 @@
         }
         id = id.substring(0, id.length - 1);
         window.location.href = "deleteManyById?id=" + id;
+    }
+
+    function daoru() {
+        var x = document.getElementsByName("daoru")
+        window.location.href="poiInto";
     }
 
     function doExport() {
@@ -720,14 +715,14 @@
         var pollutionRateStr = $("#wuranluv").val();
         var breed = $("#crop_species").val();
         var sampleId = $("#sample_id").val();
-        var toxinId = $("#toxin_type").val();
+        var toxinType = $("#toxin_type").val();
         var year = $("#year").val();
         var month = $("#month").val();
         var day = $("#day").val();
-        var province1 = $("#shen").val()
-        var city1 = $("#shi").val()
-        var county1 = $("#xian").val()
-        window.location.href = "findBySearchBean?pollutionRate=" + pollutionRateStr + "&sampleId=" + sampleId + "&breed=" + breed + "&year=" + year + "&month=" + month + "&day=" + day + "&toxinId=" + toxinId + "&province1=" + province1 + "&city1=" + city1 + "&county1=" + county1;
+        var province1 = $("#shen").val();
+        var city1 = $("#shi").val();
+        var county1 = $("#xian").val();
+        window.location.href = "findBySearchBean?pollutionRate=" + pollutionRateStr + "&sampleId=" + sampleId + "&breed=" + breed + "&year=" + year + "&month=" + month + "&day=" + day + "&toxinType=" + toxinType + "&province1=" + province1 + "&city1=" + city1 + "&county1=" + county1;
     }
 </script>
 </body>

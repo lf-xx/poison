@@ -1,6 +1,7 @@
 package com.lff.poison.mapper;
 
 
+import com.lff.poison.domain.SampleToxin;
 import com.lff.poison.domain.SampleToxinInfo;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,5 +12,8 @@ public interface SampleToxinInfoMapper {
 
     //查询所有毒素
     public List<SampleToxinInfo> selectAll();
+
+
+
 
 }

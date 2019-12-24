@@ -14,4 +14,7 @@
   <select id="selecteAll" resultMap="BaseResultMap">
     select * from address_city where provinceCode = #{shi}
   </select>
+  <select id="queryByNameAndCode" resultMap="BaseResultMap">
+    select * from address_city
+  </select>
 </mapper>
